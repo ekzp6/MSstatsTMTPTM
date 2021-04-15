@@ -207,10 +207,15 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
   datarun.protein$Condition <- factor(datarun.protein$Condition)
   datarun.ptm$Condition <- factor(datarun.ptm$Condition)
 
-  ## Remove Site from protein name
-  regex_protein <- '([^-]+)(?:_[^-]+){1}$'
-  datafeature.ptm <- datafeature.ptm %>% mutate(GlobalProtein = str_match(
-    ProteinName, regex_protein)[,2])
+  ## Remove Site from protein name #############################################################################################
+  datafeature.ptm <- datafeature.ptm %>% mutate(id = row_number(), GlobalProtein = str_split(ProteinName, ";"))
+  datafeature.ptm <- datafeature.ptm %>% unnest(GlobalProtein) %>%
+    mutate(GlobalProtein = unlist(str_split(GlobalProtein, "_"))[c(TRUE,FALSE)]) 
+  datafeature.ptm <- datafeature.ptm %>% group_by(id) %>% 
+    mutate(GlobalProtein = str_c(GlobalProtein, collapse = ';')) %>% 
+    distinct(id, .keep_all = TRUE)
+  datafeature.ptm <- datafeature.ptm %>% select(-id)
+  head(datafeature.ptm)
 
   colnames(datafeature.protein)[colnames(datafeature.protein) == 'ProteinName'
                                 ] <- 'Protein'
@@ -1398,3 +1403,9 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
   } # end QC plot
 
 }
+
+dataProcessPlotsTMTPTM(data.ptm = raw.ptm, 
+                       data.protein = raw.protein, 
+                       data.ptm.summarization = quant.ptm, 
+                       data.protein.summarization = quant.protein, 
+                       type = "QCPlot")
