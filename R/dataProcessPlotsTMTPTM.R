@@ -101,7 +101,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
                                    summaryPlot = TRUE,
                                    address = "") {
 
-  ## save process output in each step
+  # save process output in each step
   allfiles <- list.files()
   filenaming <- "mstatstmtptm"
 
@@ -212,10 +212,8 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
   datafeature.ptm <- datafeature.ptm %>% unnest(GlobalProtein) %>%
     mutate(GlobalProtein = unlist(str_split(GlobalProtein, "_"))[c(TRUE,FALSE)]) 
   datafeature.ptm <- datafeature.ptm %>% group_by(id) %>% 
-    mutate(GlobalProtein = str_c(GlobalProtein, collapse = ';')) %>% 
-    distinct(id, .keep_all = TRUE)
-  datafeature.ptm <- datafeature.ptm %>% select(-id)
-  head(datafeature.ptm)
+    mutate(GlobalProtein = str_c(GlobalProtein, collapse = ';'))
+  datafeature.ptm <- as.data.frame(datafeature.ptm)
 
   colnames(datafeature.protein)[colnames(datafeature.protein) == 'ProteinName'
                                 ] <- 'Protein'
@@ -1403,9 +1401,3 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
   } # end QC plot
 
 }
-
-dataProcessPlotsTMTPTM(data.ptm = raw.ptm, 
-                       data.protein = raw.protein, 
-                       data.ptm.summarization = quant.ptm, 
-                       data.protein.summarization = quant.protein, 
-                       type = "QCPlot")
