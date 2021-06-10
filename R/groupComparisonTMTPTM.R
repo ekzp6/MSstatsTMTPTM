@@ -83,20 +83,20 @@ groupComparisonTMTPTM <- function(data.ptm, data.protein = NULL,
   adj.protein <- FALSE
 
   ## Check for missing variables in PTM
-  if (is.null(data.ptm))
+  if (is.null(data.ptm[[2]]))
     stop("PTM estimates are missing!")
   required.columns <- c('Run', 'Protein', 'Abundance', 'Channel',
                 'BioReplicate', 'Condition', 'TechRepMixture', 'Mixture')
-  if (!all(required.columns %in% names(data.ptm))) {
+  if (!all(required.columns %in% names(data.ptm[[2]]))) {
     stop("Please include in the PTM list all the following elements: ",
          paste0(sQuote(required.columns), collapse = ", "))
   }
 
   ## Determine if PTM should be adjusted for protein level
-  if (!is.null(data.protein)) {
+  if (!is.null(data.protein[[2]])) {
     adj.protein = TRUE
 
-    if (!all(required.columns %in% names(data.protein))) {
+    if (!all(required.columns %in% names(data.protein[[2]]))) {
       stop("Please include in the Protein list all the following elements: ",
            paste0(sQuote(required.columns), collapse = ", "))
     }
@@ -106,6 +106,7 @@ groupComparisonTMTPTM <- function(data.ptm, data.protein = NULL,
   message("Starting PTM modeling...")
   ptm_model <- MSstatsTMT::groupComparisonTMT(data.ptm, contrast.matrix,
                                               moderated, adj.method)
+  ptm_model <- ptm_model[[1]]
 
   models <- list('PTM.Model' = ptm_model)
 
@@ -116,6 +117,7 @@ groupComparisonTMTPTM <- function(data.ptm, data.protein = NULL,
     protein_model <- MSstatsTMT::groupComparisonTMT(data.protein,
                                                     contrast.matrix,
                                                     moderated, adj.method)
+    protein_model <- protein_model[[1]]
 
     ## Parse site from protein name
     # regex_protein <- '([^-]+)(?:_[^-]+){1}$'
