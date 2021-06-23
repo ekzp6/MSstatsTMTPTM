@@ -136,8 +136,16 @@ groupComparisonTMTPTM <- function(data.ptm, data.protein = NULL,
     ## Set site
     ptm_model_site_sep$Site <- ptm_model_site_sep$Protein
     ## Call Rcpp function
+
+    ptm_model_site_sep <- ptm_model_site_sep %>%
+      mutate(Protein = sapply(str_split(Protein, ';'), function(x){
+        x <- sapply(x, function(y) str_split(y, '_')[[1]][1])
+        return(str_c(x, collapse = ';'))
+      }))
+
     ptm_proteins <- extract_protein_name(ptm_model_site_sep$Protein,
                                          available_proteins)
+
     ptm_model_site_sep$Protein <- ptm_proteins
 
     ## adjustProteinLevel function can only compare one label at a time
