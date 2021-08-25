@@ -142,12 +142,12 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
     write.table(processout, file=finalfile, row.names=FALSE)
 
     stop("Input for type=", type,
-                ". However,'type' should be one of ProfilePlot, QCPlot.")
+         ". However,'type' should be one of ProfilePlot, QCPlot.")
   }
 
   raw.required.columns <- c('ProteinName', 'PeptideSequence', 'Charge', 'PSM',
-                        'Mixture', 'TechRepMixture', 'Run', 'Channel',
-                        'Condition', 'BioReplicate', 'Intensity')
+                            'Mixture', 'TechRepMixture', 'Run', 'Channel',
+                            'Condition', 'BioReplicate', 'Intensity')
   if (!all(raw.required.columns %in% names(data.ptm))) {
     stop("Please include in the raw PTM data all the following elements: ",
          paste0(sQuote(raw.required.columns), collapse = ", "))
@@ -158,19 +158,19 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
   }
 
   summarized.required.columns <- c('Run', 'Protein', 'Abundance', 'Channel',
-                        'BioReplicate', 'Condition', 'TechRepMixture',
-                        'Mixture')
+                                   'BioReplicate', 'Condition', 'TechRepMixture',
+                                   'Mixture')
   if (!all(summarized.required.columns %in% names(data.ptm.summarization))) {
     stop(
       "Please include in the summarized PTM data all the following elements: ",
-         paste0(sQuote(summarized.required.columns), collapse = ", "))
+      paste0(sQuote(summarized.required.columns), collapse = ", "))
   }
   if (!all(summarized.required.columns %in% names(data.protein.summarization))
-      ) {
+  ) {
     stop(
       "Please include in the summarized
       Protein data all the following elements: ",
-         paste0(sQuote(summarized.required.columns), collapse = ", "))
+      paste0(sQuote(summarized.required.columns), collapse = ", "))
   }
 
   Condition <- Run <- xorder <- Channel <- NULL
@@ -210,15 +210,15 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
   ## Remove Site from protein name #############################################################################################
   datafeature.ptm <- datafeature.ptm %>% mutate(id = row_number(), GlobalProtein = str_split(ProteinName, ";"))
   datafeature.ptm <- datafeature.ptm %>% unnest(GlobalProtein) %>%
-    mutate(GlobalProtein = unlist(str_split(GlobalProtein, "_"))[c(TRUE,FALSE)]) 
-  datafeature.ptm <- datafeature.ptm %>% group_by(id) %>% 
+    mutate(GlobalProtein = unlist(str_split(GlobalProtein, "_"))[c(TRUE,FALSE)])
+  datafeature.ptm <- datafeature.ptm %>% group_by(id) %>%
     mutate(GlobalProtein = str_c(GlobalProtein, collapse = ';'))
   datafeature.ptm <- as.data.frame(datafeature.ptm)
 
   colnames(datafeature.protein)[colnames(datafeature.protein) == 'ProteinName'
-                                ] <- 'Protein'
+  ] <- 'Protein'
   colnames(datafeature.ptm)[colnames(datafeature.ptm) == 'ProteinName'
-                            ] <- 'Protein'
+  ] <- 'Protein'
 
   datafeature.protein$Protein <- factor(datafeature.protein$Protein)
   datafeature.ptm$Protein <- factor(datafeature.ptm$Protein)
@@ -236,10 +236,10 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
                 datarun.ptm$Intensity < 1, 'abundance'] <- 0
 
   if (length(setdiff(toupper(type), c(toupper("ProfilePlot"), toupper("QCPlot")
-                                      ))) != 0) {
+  ))) != 0) {
     stop("Input for type=", type,
-                ". However,'type' should be one of \"ProfilePlot\", \"QCPlot\"."
-                )
+         ". However,'type' should be one of \"ProfilePlot\", \"QCPlot\"."
+    )
   }
 
   if (address == FALSE){
@@ -271,7 +271,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
         if (length(setdiff(temp.name,unique(datafeature.ptm$Protein))) > 0) {
           stop("Please check protein name. Data set does not
                       have this protein. - ",
-                      toString(temp.name))
+               toString(temp.name))
         }
       }
 
@@ -282,7 +282,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
         ## message if name of Protein is wrong.
         if (length(levels(datafeature.ptm$Protein)) < max(which.Protein)) {
           stop("Please check your ion of proteins. There are ",
-                      length(levels(datafeature.ptm$Protein))," proteins in this
+               length(levels(datafeature.ptm$Protein))," proteins in this
                       dataset.")
         }
       }
@@ -291,7 +291,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
       datafeature.ptm <- datafeature.ptm[which(datafeature.ptm$Protein %in%
                                                  temp.name), ]
       temp_proteins <- as.character((datafeature.ptm %>% distinct(GlobalProtein)
-                                     )[[1]])
+      )[[1]])
       datafeature.ptm$Protein <- factor(datafeature.ptm$Protein)
 
       datafeature.protein <- datafeature.protein[which(
@@ -347,7 +347,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
       datafeature.protein[datafeature.protein$Run == runid, ]$xorder <- factor(
         datafeature.protein[datafeature.protein$Run == runid, ]$group.channel,
         levels <- unique(datafeature.protein[datafeature.protein$Run == runid,
-                                             ]$group.channel),
+        ]$group.channel),
         labels <- seq(1, length(unique(datafeature.protein[
           datafeature.protein$Run == runid, ]$group.channel))))
     }
@@ -358,7 +358,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
       datafeature.ptm[datafeature.ptm$Run == runid, ]$xorder <- factor(
         datafeature.ptm[datafeature.ptm$Run == runid, ]$group.channel,
         levels <- unique(datafeature.ptm[datafeature.ptm$Run == runid,
-                                         ]$group.channel),
+        ]$group.channel),
         labels <- seq(1, length(unique(datafeature.ptm[
           datafeature.ptm$Run == runid, ]$group.channel))))
     }
@@ -443,7 +443,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
 
       datarun.ptm <- reshape2::melt(datamat, id.vars=c('Protein', 'Channel'))
       colnames(datarun.ptm)[colnames(datarun.ptm) %in% c("variable", "value")
-                            ] <- c('Run', 'Abundance')
+      ] <- c('Run', 'Abundance')
 
       ## match x axis order
       datarun.ptm <- merge(datarun.ptm, tempGroupName.ptm,
@@ -508,13 +508,13 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
         # if all measurements are NA,
         if (nrow(sub.protein) == sum(is.na(sub.protein$abundance))|
             nrow(sub.protein) == sum(!is.na(
-          sub.protein$abundance) & sub.protein$abundance == 0)|
-          nrow(sub.ptm) == sum(is.na(sub.ptm$abundance))|
-          nrow(sub.ptm) == sum(
-            !is.na(sub.ptm$abundance) & sub.ptm$abundance == 0)) {
+              sub.protein$abundance) & sub.protein$abundance == 0)|
+            nrow(sub.ptm) == sum(is.na(sub.ptm$abundance))|
+            nrow(sub.ptm) == sum(
+              !is.na(sub.ptm$abundance) & sub.ptm$abundance == 0)) {
           message(paste0("Can't the Profile plot for ", unique(
             sub.protein$Protein), "(", i, " of ", length(plot_proteins),
-                         ") because all measurements are NAs or zero."))
+            ") because all measurements are NAs or zero."))
           next()
         }
 
@@ -563,7 +563,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
                                                   sub.protein$PSM)[1],
                                                 "PeptideSequence" = unique(
                                                   sub.protein$PeptideSequence
-                                                  )[1])
+                                                )[1])
 
         groupline.tmp.ptm <- data.frame(groupline.ptm,
                                         "PSM" = unique(sub.ptm$PSM)[1],
@@ -631,18 +631,18 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
           guides(color = guide_legend(title = paste("# peptide:", nlevels(
             sub.protein$PeptideSequence)),
             title.theme = element_text(size = 13, angle = 0),
-                                      keywidth = 0.4,
-                                      keyheight = 0.1,
-                                      default.unit = 'inch',
-                                      ncol = ncol.guide),
-                 linetype = guide_legend(
-                   title = paste("# peptide:",
-                                 nlevels(sub.protein$PeptideSequence)),
-                   title.theme = element_text(size = 13, angle = 0),
-                                         keywidth = 0.4,
-                                         keyheight = 0.1,
-                                         default.unit = 'inch',
-                                         ncol = ncol.guide))
+            keywidth = 0.4,
+            keyheight = 0.1,
+            default.unit = 'inch',
+            ncol = ncol.guide),
+            linetype = guide_legend(
+              title = paste("# peptide:",
+                            nlevels(sub.protein$PeptideSequence)),
+              title.theme = element_text(size = 13, angle = 0),
+              keywidth = 0.4,
+              keyheight = 0.1,
+              default.unit = 'inch',
+              ncol = ncol.guide))
 
         ## 1st plot for PTM plot
         ptm_temp <- ggplot(aes_string(x = 'xorder', y = 'abundance',
@@ -683,17 +683,17 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
           guides(color = guide_legend(title = paste(
             "# peptide:", nlevels(sub.ptm$PeptideSequence)),
             title.theme = element_text(size = 13, angle = 0),
-                                      keywidth = 0.4,
-                                      keyheight = 0.1,
-                                      default.unit = 'inch',
-                                      ncol = ncol.guide),
-                 linetype = guide_legend(
-                   title = paste("# peptide:", nlevels(sub.ptm$PeptideSequence)),
-                   title.theme = element_text(size = 13, angle = 0),
-                                         keywidth = 0.4,
-                                         keyheight = 0.1,
-                                         default.unit = 'inch',
-                                         ncol = ncol.guide))
+            keywidth = 0.4,
+            keyheight = 0.1,
+            default.unit = 'inch',
+            ncol = ncol.guide),
+            linetype = guide_legend(
+              title = paste("# peptide:", nlevels(sub.ptm$PeptideSequence)),
+              title.theme = element_text(size = 13, angle = 0),
+              keywidth = 0.4,
+              keyheight = 0.1,
+              default.unit = 'inch',
+              ncol = ncol.guide))
 
         gridExtra::grid.arrange(ptm_temp, protein_temp, ncol=1)
 
@@ -754,8 +754,8 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
               !is.na(sub.ptm$abundance) & sub.ptm$abundance == 0)) {
           message(paste0("Can't the Profile plot for ", unique(
             sub.protein$Protein),
-                         "(", i, " of ", length(plot_proteins),
-                         ") because all measurements are NAs or zero."))
+            "(", i, " of ", length(plot_proteins),
+            ") because all measurements are NAs or zero."))
           next()
         }
 
@@ -770,7 +770,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
                                                   sub.protein$PSM)[1],
                                                 "PeptideSequence" = unique(
                                                   sub.protein$PeptideSequence
-                                                  )[1])
+                                                )[1])
 
         groupline.tmp.ptm <- data.frame(groupline.ptm,
                                         "PSM" = unique(sub.ptm$PSM)[1],
@@ -1043,28 +1043,28 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
 
       runid <- unique(datafeature.protein$Run)[k]
       datafeature.protein[datafeature.protein$Run == runid,
-                          ]$xorder <- factor(datafeature.protein[
-                            datafeature.protein$Run == runid, ]$group.channel,
-                            levels <- unique(
-                              datafeature.protein[
-                                datafeature.protein$Run == runid,
-                                ]$group.channel),
-                            labels <- seq(1, length(
-                              unique(datafeature.protein[
-                                datafeature.protein$Run == runid,
-                                ]$group.channel))))
+      ]$xorder <- factor(datafeature.protein[
+        datafeature.protein$Run == runid, ]$group.channel,
+        levels <- unique(
+          datafeature.protein[
+            datafeature.protein$Run == runid,
+          ]$group.channel),
+        labels <- seq(1, length(
+          unique(datafeature.protein[
+            datafeature.protein$Run == runid,
+          ]$group.channel))))
     }
 
     for (k in seq_along(unique(datafeature.ptm$Run))) {
 
       runid <- unique(datafeature.ptm$Run)[k]
       datafeature.ptm[datafeature.ptm$Run == runid,
-                      ]$xorder <- factor(datafeature.ptm[
-                        datafeature.ptm$Run == runid, ]$group.channel,
-                        levels <- unique(datafeature.ptm[
-                          datafeature.ptm$Run == runid, ]$group.channel),
-                        labels <- seq(1, length(unique(datafeature.ptm[
-                          datafeature.ptm$Run == runid, ]$group.channel))))
+      ]$xorder <- factor(datafeature.ptm[
+        datafeature.ptm$Run == runid, ]$group.channel,
+        levels <- unique(datafeature.ptm[
+          datafeature.ptm$Run == runid, ]$group.channel),
+        labels <- seq(1, length(unique(datafeature.ptm[
+          datafeature.ptm$Run == runid, ]$group.channel))))
     }
 
     ## need to make data.frame with same variables for condition name
@@ -1127,29 +1127,29 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
 
       ## for annotation of condition
       groupline.tmp.protein <- data.frame(groupline.protein,
-                                  "PSM" = unique(datafeature.protein$PSM)[1],
-                                  "PeptideSequence" = unique(
-                                    datafeature.protein$PeptideSequence)[1])
+                                          "PSM" = unique(datafeature.protein$PSM)[1],
+                                          "PeptideSequence" = unique(
+                                            datafeature.protein$PeptideSequence)[1])
 
       groupline.all.tmp.protein <- data.frame(groupline.all.protein,
-                                      "PSM" = unique(
-                                        datafeature.protein$PSM)[1],
-                                      "PeptideSequence" = unique(
-                                        datafeature.protein$PeptideSequence)[1])
+                                              "PSM" = unique(
+                                                datafeature.protein$PSM)[1],
+                                              "PeptideSequence" = unique(
+                                                datafeature.protein$PeptideSequence)[1])
 
       ## for annotation of condition
       groupline.tmp.ptm <- data.frame(groupline.ptm,
+                                      "PSM" = unique(
+                                        datafeature.ptm$PSM)[1],
+                                      "PeptideSequence" = unique(
+                                        datafeature.ptm$PeptideSequence)[1])
+
+      groupline.all.tmp.ptm <- data.frame(groupline.all.ptm,
                                           "PSM" = unique(
                                             datafeature.ptm$PSM)[1],
                                           "PeptideSequence" = unique(
-                                            datafeature.ptm$PeptideSequence)[1])
-
-      groupline.all.tmp.ptm <- data.frame(groupline.all.ptm,
-                                              "PSM" = unique(
-                                                datafeature.ptm$PSM)[1],
-                                              "PeptideSequence" = unique(
-                                                datafeature.ptm$PeptideSequence
-                                                )[1])
+                                            datafeature.ptm$PeptideSequence
+                                          )[1])
 
       ## 1st plot for original plot
       ## for boxplot, x-axis, xorder should be factor
@@ -1233,7 +1233,7 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
           if (length(setdiff(temp.name,unique(datafeature.ptm$Protein))) > 0) {
             stop("Please check protein name.
                         Data set does not have this protein. - ",
-                        toString(temp.name))
+                 toString(temp.name))
           }
         }
 
@@ -1244,8 +1244,8 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
           ## message if name of Protein is wrong.
           if (length(levels(datafeature.ptm$Protein)) < max(which.Protein)) {
             stop("Please check your ion of proteins. There are ",
-                        length(levels(datafeature.ptm$Protein)),
-                        " proteins in this dataset.")
+                 length(levels(datafeature.ptm$Protein)),
+                 " proteins in this dataset.")
           }
         }
 
@@ -1294,31 +1294,31 @@ dataProcessPlotsTMTPTM <- function(data.ptm,
             nrow(sub.protein) == sub.protein[!is.na(sub.protein$abundance), ]) {
           message(paste("Can't the Quality Control plot for ", unique(
             sub.ptm$Protein),
-                        "(", i, " of ", length(plot_proteins),
-                        ") because all measurements are NAs."))
+            "(", i, " of ", length(plot_proteins),
+            ") because all measurements are NAs."))
           next()
         }
 
         ## for annotation of condition
         groupline.tmp.ptm <- data.frame(groupline.ptm,
-                                    "PSM" = unique(sub.ptm$PSM)[1],
-                                    "PeptideSequence" = unique(
-                                      sub.ptm$PeptideSequence)[1])
-
-        groupline.all.tmp.ptm <- data.frame(groupline.all.ptm,
                                         "PSM" = unique(sub.ptm$PSM)[1],
                                         "PeptideSequence" = unique(
                                           sub.ptm$PeptideSequence)[1])
 
+        groupline.all.tmp.ptm <- data.frame(groupline.all.ptm,
+                                            "PSM" = unique(sub.ptm$PSM)[1],
+                                            "PeptideSequence" = unique(
+                                              sub.ptm$PeptideSequence)[1])
+
         groupline.tmp.protein <- data.frame(groupline.protein,
-                                    "PSM" = unique(sub.protein$PSM)[1],
-                                    "PeptideSequence" = unique(
-                                      sub.protein$PeptideSequence)[1])
+                                            "PSM" = unique(sub.protein$PSM)[1],
+                                            "PeptideSequence" = unique(
+                                              sub.protein$PeptideSequence)[1])
 
         groupline.all.tmp.protein <- data.frame(groupline.all.protein,
-                                        "PSM" = unique(sub.protein$PSM)[1],
-                                        "PeptideSequence" = unique(
-                                          sub.protein$PeptideSequence)[1])
+                                                "PSM" = unique(sub.protein$PSM)[1],
+                                                "PeptideSequence" = unique(
+                                                  sub.protein$PeptideSequence)[1])
 
         ## 1st plot for original plot
         ## for boxplot, x-axis, xorder should be factor
